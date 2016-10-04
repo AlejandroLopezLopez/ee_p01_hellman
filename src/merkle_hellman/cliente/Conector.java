@@ -49,14 +49,16 @@ public class Conector extends Thread{
     }
     
     /**
-     * 
+     * Este metodo enviarMensaje encripta el mensaje para enviarlo Y al momento de recibrilo lo desencripta y lo muestra en pantalla  
      * @param mensaje 
      */
     public void enviarMensaje(String mensaje){
         System.out.println("Enviando");
         try{
+            Algoritmo.encriptar(mensaje);
           this.salida=new DataOutputStream(s.getOutputStream());
-          this.salida.writeUTF((mensaje)+"\n");//aqui modifique para encriptar
+          this.salida.writeUTF(Algoritmo.desencriptar()+"\n");//aqui lo modifique para encriptar
+          Algoritmo.vaciar();
         }catch(IOException e){
             System.out.println("Problema al enviar");
         };

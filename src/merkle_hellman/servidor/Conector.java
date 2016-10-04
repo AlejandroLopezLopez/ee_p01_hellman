@@ -29,14 +29,16 @@ public class Conector extends Thread {
         super(nombre);
     }
     /**
-     * 
+     * Este metodo encripta el mensaje para el servidor y al momento de recibirlo lo desencripta y lo muestra en pantalla
      * @param mensaje 
      */
     public void enviarMsg(String mensaje){
         System.out.println("Enviando");
         try{
+           Algoritmo.encriptar(mensaje);
           this.salida=new DataOutputStream(s.getOutputStream());
-          this.salida.writeUTF(mensaje+"\n");
+          this.salida.writeUTF(Algoritmo.desencriptar()+"\n");
+          Algoritmo.vaciar();
         }catch(IOException e){
             System.out.println("Problema al enviar");
         }; 
@@ -73,7 +75,7 @@ public class Conector extends Thread {
        try{
          return this.entrada.readLine();
        }catch(IOException e){}
-      
+       
        return null;
     }
     

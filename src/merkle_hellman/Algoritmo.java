@@ -11,16 +11,16 @@ package merkle_hellman;
  */
 import java.math.*;
 import java.util.*;
-import sun.misc.FloatingDecimal;
+
 public class Algoritmo {
    
-static  Lista<BigInteger> secuencia=new Lista<BigInteger>();
-static  Lista<BigInteger> pubKey=new Lista<BigInteger>();
-static  Lista<BigInteger> listaFinal=new Lista<BigInteger>();
-static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
+ static Lista<BigInteger> secuencia=new Lista<BigInteger>();
+ static Lista<BigInteger> pubKey=new Lista<BigInteger>();
+ static Lista<BigInteger> listaFinal=new Lista<BigInteger>();
+ static BigInteger sumatoria,valorQ,valorR,primero,siguiente;
   
   /**
-   * Metodo getSumatoria
+   * Metodo getSumatoria: Retorna el valor de la sumatoria de la serie super incrementada 
    * @return 
    */
   public BigInteger getSumatoria(){
@@ -77,7 +77,7 @@ static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
           valorR=new BigInteger(temporal+"");
       }while(((valorQ.gcd(valorR)).compareTo(comparable))!=0);
       
-        System.out.println("R: "+valorR+"\n"+" Minimo comun multiplo debe ser: "+valorQ.gcd(valorR));
+        System.out.println("R: "+valorR+"\n"+" Minimo comun multiplo con vaor de: "+valorQ.gcd(valorR));
       
       
  }
@@ -99,8 +99,8 @@ static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
     
     
     /**
-     * 
-     * @param texto
+     * Convierte una cadena de texto a codigo binario
+     * @param texto es  la cadena a convertir
      * @return 
      */
  public static  String textoABinario(String texto)
@@ -111,7 +111,7 @@ static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
             textoBinario += String.format("%8s", Integer.toBinaryString(letra));
         }
       
-        return textoBinario.replace("\u0020","\u0030");
+        return textoBinario.replace("\u0020","\u0030");//esta instruccion reemplaza una serie de caracteres por otra
     }
 
 /**
@@ -130,7 +130,7 @@ static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
     return lista;
  }
  
- /**
+ /**metodo que encripta una cadena de texto
   * encriptar
   */
  
@@ -166,17 +166,20 @@ static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
         BigInteger big= new BigInteger(suma+"");
         listaFinal.insertaFinal(big);
         
-        System.out.print(big+",");
+       
         retorno+=suma+""+",";
         suma=suma-suma;
     
     }
     return retorno;
  }
- 
- public static  void desencriptar(){
+ /**
+  * Desencripta el mensaje encriptado anteriormente
+  * @return 
+  */
+ public static  String desencriptar(){
    
-   System.out.println("\nLista final: "+listaFinal);
+   System.out.println("\nMensaje Encriptado: "+listaFinal);
    Lista<BigInteger> descricao=new Lista<BigInteger>();// es la lista de  sumatorias para aplicar la formula 
    BigInteger decrip;
    Nodo<BigInteger> recorre=listaFinal.getInicio();
@@ -185,7 +188,7 @@ static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
        descricao.insertaFinal(decrip);
        recorre=recorre.getSiguiente();
    }
-     System.out.println("\n Descricao:"+descricao);
+     System.out.println("\n Lista con los elementos del mensaje encrptado aplicando la formula power MOD:"+descricao);
    
 //invertimos la clave primaria   
 
@@ -196,7 +199,7 @@ Lista<BigInteger> inversa=new Lista<BigInteger>();
    inversa.insertaInicio(aux.getDato());
    aux=aux.getSiguiente();
    }
-     System.out.println("Inversa: " +inversa );   
+     System.out.println("Llave privada inversa: " +inversa );   
 
 //desencriptamos
 Nodo<BigInteger> aux2=inversa.getInicio();
@@ -224,7 +227,7 @@ aux2=inversa.getInicio();
 
 }
 
-     System.out.println("Binarios: " + binario);
+     System.out.println("Binarios en  orden inverso: " + binario);
     
   // invertir binarios
   
@@ -246,42 +249,47 @@ aux4=aux4.getSiguiente();
 
 }
 
-     System.out.println("binarios bien: " + binarios2);
+     System.out.println("Binarios en orden correcto: " + binarios2);
 
-//comvertir
+//convertir: convierte los numeros binarios a letras
 
 
 Nodo<String> vr=binarios2.getInicio();
-System.out.println("Letras:");
-
+System.out.println("Mensaje desencriptado:");
+String textF="";
 char c;
 while(vr!=null){
     
     c=(char)Integer.parseInt(vr.getDato(),2);
-    System.out.print(c);   
+    System.out.print(c);  
+    textF+=c;
     vr=vr.getSiguiente();
 }
-     /* BigInteger descrip;  
-   BigInteger sumaTotal=new BigInteger("0");
-   Nodo<BigInteger> recorre=listaFinal.getInicio();
    
-   while(recorre!=null){
-   
-   sumaTotal=sumaTotal.add(recorre.getDato());
-   recorre=recorre.getSiguiente();
-   
-   } 
-   descrip=sumaTotal.multiply(valorR.modInverse(valorQ)).mod(valorQ);
-     System.out.println("\nsumatotal: "+sumaTotal);
-     System.out.println("descrip:"+descrip);*/
      
      
      
-   
+  return textF;   
  
  }
+ /**
+  * vacia las listas de toda la clase asi como las variables para que no se sobreescriban debido que estas son estaticas
+  */
+  public static void vaciar(){
+  
+   secuencia.setInicio(null);
+   pubKey.setInicio(null);
+   listaFinal.setInicio(null);
+   sumatoria=null;
+   valorQ=null;
+   valorR=null;
+   primero=null;
+   siguiente=null;
+  }
+ 
+ 
     /**
-     * 
+     * Nos genera un bigInteger aleatorio con parametros de un minimo y un maximo
      * @param tope
      * @return 
      */
@@ -291,6 +299,3 @@ while(vr!=null){
          return new BigInteger(tope.bitLength(),num);
     }
 }
-/**
- * volvi todos los metodos staticos y el metodo encriptar lo hice que retornara un String
- */
