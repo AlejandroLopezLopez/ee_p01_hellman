@@ -11,6 +11,7 @@ package merkle_hellman.cliente;
  */
 import java.net.*;
 import java.io.*;
+import merkle_hellman.Algoritmo;
 public class Conector extends Thread{
     private Socket s;
     private ServerSocket ss;
@@ -55,7 +56,7 @@ public class Conector extends Thread{
         System.out.println("Enviando");
         try{
           this.salida=new DataOutputStream(s.getOutputStream());
-          this.salida.writeUTF(mensaje+"\n");
+          this.salida.writeUTF((mensaje)+"\n");//aqui modifique para encriptar
         }catch(IOException e){
             System.out.println("Problema al enviar");
         };

@@ -11,11 +11,13 @@ package merkle_hellman;
  */
 import java.math.*;
 import java.util.*;
+import sun.misc.FloatingDecimal;
 public class Algoritmo {
    
- Lista<BigInteger> secuencia=new Lista<BigInteger>();
- Lista<BigInteger> pubKey=new Lista<BigInteger>();
- BigInteger sumatoria,valorQ,valorR,primero,siguiente;
+static  Lista<BigInteger> secuencia=new Lista<BigInteger>();
+static  Lista<BigInteger> pubKey=new Lista<BigInteger>();
+static  Lista<BigInteger> listaFinal=new Lista<BigInteger>();
+static  BigInteger sumatoria,valorQ,valorR,primero,siguiente;
   
   /**
    * Metodo getSumatoria
@@ -39,7 +41,7 @@ public class Algoritmo {
 /**
  *Generar llave prevada: W,EW,Q y R.
  */
-  public void generaSecuencia(){
+  public static void generaSecuencia(){
     primero= new BigInteger(8,new Random() );
     secuencia.insertaInicio(primero);
      for (int i = 0; i < 7; i++) {
@@ -83,7 +85,7 @@ public class Algoritmo {
   /**
    * Generar llave publica
    */
-    public void llavePublica(){
+    public static void llavePublica(){
     generaSecuencia();
      Nodo<BigInteger> aux=secuencia.getInicio();
      while(aux!=null){
@@ -101,7 +103,7 @@ public class Algoritmo {
      * @param texto
      * @return 
      */
- public  String textoABinario(String texto)
+ public static  String textoABinario(String texto)
     {
         String textoBinario = "";
         for(char letra : texto.toCharArray())
@@ -117,7 +119,7 @@ public class Algoritmo {
  * @param texto
  * @return 
  */ 
- public Lista<BigInteger> listaBinarios(String texto){
+ public static Lista<BigInteger> listaBinarios(String texto){
     Lista<BigInteger> lista=new Lista<BigInteger>();
     for(char letra :texto.toCharArray()){
         String b=letra+"";
@@ -132,7 +134,8 @@ public class Algoritmo {
   * encriptar
   */
  
- public void encriptar(String texto){
+ public static String encriptar(String texto){
+     llavePublica();
     Lista<BigInteger> resultado=new Lista<BigInteger>();
     Lista<BigInteger> textoBinarios;//esta lista solo sirve para almacenar los ninarios con los dos metoso anteriores
     textoBinarios=listaBinarios(textoABinario(texto));
@@ -149,6 +152,7 @@ public class Algoritmo {
        pk=pubKey.getInicio();
     }
     
+    String retorno="";
     Nodo<BigInteger> nres=resultado.getInicio();
     Integer conta=0;
     Integer suma=0;
@@ -159,11 +163,122 @@ public class Algoritmo {
             suma+=conta;
             nres=nres.getSiguiente();
         }
-        System.out.print(new BigInteger(suma+"")+",");
+        BigInteger big= new BigInteger(suma+"");
+        listaFinal.insertaFinal(big);
+        
+        System.out.print(big+",");
+        retorno+=suma+""+",";
         suma=suma-suma;
     
     }
+    return retorno;
+ }
+ 
+ public static  void desencriptar(){
+   
+   System.out.println("\nLista final: "+listaFinal);
+   Lista<BigInteger> descricao=new Lista<BigInteger>();// es la lista de  sumatorias para aplicar la formula 
+   BigInteger decrip;
+   Nodo<BigInteger> recorre=listaFinal.getInicio();
+   while(recorre!=null){
+       decrip=recorre.getDato().multiply(valorR.modInverse(valorQ)).mod(valorQ);
+       descricao.insertaFinal(decrip);
+       recorre=recorre.getSiguiente();
+   }
+     System.out.println("\n Descricao:"+descricao);
+   
+//invertimos la clave primaria   
+
+Lista<BigInteger> inversa=new Lista<BigInteger>();
+   Nodo<BigInteger> aux=secuencia.getInicio();
+   
+   while(aux!=null){
+   inversa.insertaInicio(aux.getDato());
+   aux=aux.getSiguiente();
+   }
+     System.out.println("Inversa: " +inversa );   
+
+//desencriptamos
+Nodo<BigInteger> aux2=inversa.getInicio();
+Nodo<BigInteger> aux3=descricao.getInicio();
+Lista<String> binario=new Lista<String>();
+String bin="";
+BigInteger i;
+while(aux3!=null){
+
+i=aux3.getDato();
+while(aux2!=null){
+
+if(aux2.getDato().compareTo(i)==-1 || aux2.getDato().compareTo(i)==0){
+i=i.subtract(aux2.getDato());
+bin+="1";
+}else{
+bin+="0";
+}
+aux2=aux2.getSiguiente();
+}
+binario.insertaFinal(bin);
+bin="";
+aux3=aux3.getSiguiente();
+aux2=inversa.getInicio();
+
+}
+
+     System.out.println("Binarios: " + binario);
     
+  // invertir binarios
+  
+Lista<String> binarios2=new Lista();
+Nodo<String> aux4=binario.getInicio();
+String bueno="";
+String a="";
+
+while(aux4!=null){
+a=aux4.getDato();
+
+for(int ñ=a.length()-1;ñ>=0;ñ--){
+bueno+=a.charAt(ñ);
+}
+
+binarios2.insertaFinal(bueno);
+bueno="";
+aux4=aux4.getSiguiente();
+
+}
+
+     System.out.println("binarios bien: " + binarios2);
+
+//comvertir
+
+
+Nodo<String> vr=binarios2.getInicio();
+System.out.println("Letras:");
+
+char c;
+while(vr!=null){
+    
+    c=(char)Integer.parseInt(vr.getDato(),2);
+    System.out.print(c);   
+    vr=vr.getSiguiente();
+}
+     /* BigInteger descrip;  
+   BigInteger sumaTotal=new BigInteger("0");
+   Nodo<BigInteger> recorre=listaFinal.getInicio();
+   
+   while(recorre!=null){
+   
+   sumaTotal=sumaTotal.add(recorre.getDato());
+   recorre=recorre.getSiguiente();
+   
+   } 
+   descrip=sumaTotal.multiply(valorR.modInverse(valorQ)).mod(valorQ);
+     System.out.println("\nsumatotal: "+sumaTotal);
+     System.out.println("descrip:"+descrip);*/
+     
+     
+     
+   
+ 
  }
     /**
      * 
@@ -176,3 +291,6 @@ public class Algoritmo {
          return new BigInteger(tope.bitLength(),num);
     }
 }
+/**
+ * volvi todos los metodos staticos y el metodo encriptar lo hice que retornara un String
+ */

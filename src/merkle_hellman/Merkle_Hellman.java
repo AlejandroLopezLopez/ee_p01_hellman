@@ -18,11 +18,12 @@ public class Merkle_Hellman {
         // TODO code application logic here
         Algoritmo alh=new Algoritmo();
        // alh.generaSecuencia();
-        alh.llavePublica();
+       // alh.llavePublica();
        // System.out.println(alh.textoABinario("ho"));
-        System.out.println("Mensaje: "+alh.listaBinarios(alh.textoABinario("puto")));
-        System.out.print("Mensaje Encriptado: ");
-        alh.encriptar("puto");
+       System.out.println("Mensaje: "+alh.listaBinarios(alh.textoABinario("Alex Puto")));
+       // System.out.print("Mensaje Encriptado: ");
+        alh.encriptar("Alex Puto");
+        alh.desencriptar();
         //System.out.println( alh.aleatorio(alh.getSumatoria()));
     }
     

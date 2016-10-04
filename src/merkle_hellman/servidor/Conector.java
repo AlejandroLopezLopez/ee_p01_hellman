@@ -12,6 +12,7 @@ package merkle_hellman.servidor;
 import java.net.*;
 import java.io.*;
 import merkle_hellman.servidor.VServidor;
+import merkle_hellman.Algoritmo;
 public class Conector extends Thread {
     
     private Socket s;
@@ -32,10 +33,13 @@ public class Conector extends Thread {
      * @param mensaje 
      */
     public void enviarMsg(String mensaje){
-    
+        System.out.println("Enviando");
         try{
-          this.salida.writeUTF(mensaje);
-        }catch(IOException e){}; 
+          this.salida=new DataOutputStream(s.getOutputStream());
+          this.salida.writeUTF(mensaje+"\n");
+        }catch(IOException e){
+            System.out.println("Problema al enviar");
+        }; 
     }
     /**
      * 
